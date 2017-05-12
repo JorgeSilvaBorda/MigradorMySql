@@ -612,7 +612,6 @@ public class Ventana extends javax.swing.JFrame {
     }
 
     public void traerTablasOrigen() {
-	//crearBaseDestino();
 	BASEORIGEN = this.comboBaseOrigen.getSelectedItem().toString();
 	String query = "SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '" + BASEORIGEN + "' AND TABLE_TYPE = 'BASE TABLE'";
 	Conexion origen = new Conexion(SERVORIGEN, BASEORIGEN, USERORIGEN, PASSORIGEN);
@@ -651,15 +650,6 @@ public class Ventana extends javax.swing.JFrame {
 	Conexion con = new Conexion(SERVDESTINO, this.txtBaseDestino.getText(), USERDESTINO, PASSDESTINO);
 	con.crear(script);
 	con.cerrar();
-    }
-    
-    void crearBaseDestino(){
-	BASEDESTINO = txtBaseDestino.getText();
-	log("Creando base de datos: " + BASEDESTINO);
-	Conexion con = new Conexion(SERVDESTINO, USERDESTINO, PASSDESTINO);
-	con.crearBase(BASEDESTINO);
-	con.cerrar();
-	log("Base de datos " + BASEDESTINO + " creada exitosamente.");
     }
     
     public void setConfigOrigen(){
