@@ -10,8 +10,21 @@ public class Ventana extends javax.swing.JFrame {
 
     private String SERVORIGEN, SERVDESTINO, USERORIGEN, USERDESTINO, PASSORIGEN, PASSDESTINO, BASEORIGEN, BASEDESTINO;
     private boolean origenOk, destinoOk;
+    private ConfigOrigen confIn;
+    private ConfigDestino confOut;
     public Ventana() {
 	initComponents();
+	Lector lee = new Lector();
+	this.confIn = lee.leerConfOrigen();
+	this.confOut = lee.leerConfDestino();
+	
+	if(this.confIn != null){
+	    setConfigOrigen();
+	}
+	
+	if(this.confOut != null){
+	    setConfigDestino();
+	}
     }
 
     @SuppressWarnings("unchecked")
@@ -392,6 +405,8 @@ public class Ventana extends javax.swing.JFrame {
 	USERORIGEN = txtUsuarioOrigen.getText();
 	String pass = new String(txtPasswordOrigen.getPassword());
 	PASSORIGEN = pass;
+	
+	guardarOrigen();
     }//GEN-LAST:event_btnGuardarOrigenActionPerformed
 
     private void btnGuardarDestinoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarDestinoActionPerformed
@@ -400,6 +415,7 @@ public class Ventana extends javax.swing.JFrame {
 	USERDESTINO = txtUsuarioDestino.getText();
 	String pass = new String(txtPasswordDestino.getPassword());
 	PASSDESTINO = pass;
+	guardarDestino();
     }//GEN-LAST:event_btnGuardarDestinoActionPerformed
 
     /**
@@ -633,5 +649,39 @@ public class Ventana extends javax.swing.JFrame {
 	con.crearBase(BASEDESTINO);
 	con.cerrar();
 	log("Base de datos " + BASEDESTINO + " creada exitosamente.");
+    }
+    
+    public void setConfigOrigen(){
+	this.txtServidorOrigen.setText(this.confIn.getServidor());
+	this.txtUsuarioOrigen.setText(this.confIn.getUsuario());
+	this.txtPasswordOrigen.setText(this.confIn.getPassword());
+	this.comboBaseOrigen.setSelectedItem(this.confIn.getBaseDato());
+    }
+    
+    public void setConfigDestino(){
+	this.txtServidorDestino.setText(this.confOut.getServidor());
+	this.txtUsuarioDestino.setText(this.confOut.getUsuario());
+	this.txtPasswordDestino.setText(this.confOut.getPassword());
+	this.txtBaseDestino.setText(this.confOut.getBaseDato());
+    }
+    
+    public void guardarOrigen(){
+	ConfigOrigen conf = new ConfigOrigen();
+	conf.setBaseDato(this.comboBaseOrigen.getSelectedItem().toString());
+	conf.setPassword(new String(this.txtPasswordOrigen.getPassword()));
+	conf.setServidor(this.txtServidorOrigen.getText());
+	conf.setUsuario(this.txtUsuarioOrigen.getText());
+	Escritor es = new Escritor();
+	log(es.escribirOrigen(conf));
+    }
+    
+    public void guardarDestino(){
+	ConfigDestino conf = new ConfigDestino();
+	conf.setBaseDato(this.txtBaseDestino.getText());
+	conf.setPassword(new String(this.txtPasswordDestino.getPassword()));
+	conf.setServidor(this.txtServidorDestino.getText());
+	conf.setUsuario(this.txtUsuarioDestino.getText());
+	Escritor e = new Escritor();
+	log(e.escribirDestino(conf));
     }
 }
