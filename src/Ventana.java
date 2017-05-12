@@ -554,7 +554,9 @@ public class Ventana extends javax.swing.JFrame {
 	try {
 	    String[] basesOrigen = c.traerBases();
 	    for (String base : basesOrigen) {
-		this.comboBaseOrigen.addItem(base);
+		if(!base.toUpperCase().equals("INFORMATION_SCHEMA")){
+		    this.comboBaseOrigen.addItem(base);
+		}
 	    }
 	} catch (SQLException ex) {
 	    log("No se ha podido traer las bases de datos del servidor de origen");
@@ -610,9 +612,9 @@ public class Ventana extends javax.swing.JFrame {
     }
 
     public void traerTablasOrigen() {
-	crearBaseDestino();
+	//crearBaseDestino();
 	BASEORIGEN = this.comboBaseOrigen.getSelectedItem().toString();
-	String query = "SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '" + BASEORIGEN + "'";
+	String query = "SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '" + BASEORIGEN + "' AND TABLE_TYPE = 'BASE TABLE'";
 	Conexion origen = new Conexion(SERVORIGEN, BASEORIGEN, USERORIGEN, PASSORIGEN);
 	ResultSet rs = origen.ejecutarQuery(query);
 	String tabActual = "";
@@ -627,17 +629,26 @@ public class Ventana extends javax.swing.JFrame {
 		    scriptActual = r.getString("Create Table");
 		    tabActual = r.getString("Table");
 		    log("Generando tabla: " + tabActual);
+		    scriptActual = scriptActual.replace("ENGINE=Aria", "");
+		    scriptActual = scriptActual.replace("CREATE TEMPORARY TABLE", "CREATE TABLE");
+		    scriptActual = scriptActual.replace(" PAGE_CHECKSUM=0", "");
+		    scriptActual = scriptActual.replace("0000-00-00 00:00:00", "1900-01-01 00:00:00");
 		    crearTabla(scriptActual);
 		}
 	    }
+	    log(System.getProperty("line.separator"));
+	    log("Tablas creadas.");
 	} catch (SQLException ex) {
 	    Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
+	    if(ex.toString().contains("Row size too large")){
+		
+	    }
 	}
     }
     
     
     void crearTabla(String script){
-	Conexion con = new Conexion(SERVDESTINO, BASEDESTINO, USERDESTINO, PASSDESTINO);
+	Conexion con = new Conexion(SERVDESTINO, this.txtBaseDestino.getText(), USERDESTINO, PASSDESTINO);
 	con.crear(script);
 	con.cerrar();
     }
