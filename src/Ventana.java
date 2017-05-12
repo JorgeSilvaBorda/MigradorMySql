@@ -645,7 +645,6 @@ public class Ventana extends javax.swing.JFrame {
 	}
     }
     
-    
     void crearTabla(String script){
 	Conexion con = new Conexion(SERVDESTINO, this.txtBaseDestino.getText(), USERDESTINO, PASSDESTINO);
 	con.crear(script);
@@ -684,5 +683,9 @@ public class Ventana extends javax.swing.JFrame {
 	conf.setUsuario(this.txtUsuarioDestino.getText());
 	Escritor e = new Escritor();
 	log(e.escribirDestino(conf));
+    }
+    
+    public void traerDatos(){
+	
     }
 }
